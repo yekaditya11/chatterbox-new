@@ -1,5 +1,5 @@
-# Use NVIDIA CUDA runtime as base for better GPU support
-FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
+# Use NVIDIA CUDA devel image for compilation support (needed for Flash Attention)
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     ffmpeg \
     libsndfile1 \
+    ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3.11 as default
@@ -38,6 +39,10 @@ RUN uv venv --python 3.11
 # Activate the virtual environment for subsequent RUN commands
 ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Install build dependencies and Flash Attention first (compiled from source)
+RUN uv pip install packaging ninja && \
+    uv pip install flash-attn --no-build-isolation
 
 # Install PyTorch with CUDA support using uv
 RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
