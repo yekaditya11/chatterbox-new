@@ -41,7 +41,7 @@ ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install build dependencies and Flash Attention first (compiled from source)
-RUN uv pip install packaging ninja && \
+RUN uv pip install packaging ninja setuptools wheel && \
     uv pip install flash-attn --no-build-isolation
 
 # Install PyTorch with CUDA support using uv
