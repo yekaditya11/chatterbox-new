@@ -121,7 +121,9 @@ async def initialize_model():
                     _model = torch.compile(_model, mode="reduce-overhead")
                     print(f"✓ TORCH.COMPILE: ENABLED (reduce-overhead mode)")
             except Exception as e:
-                print(f"⚠️ torch.compile() failed (non-critical): {e}")
+                import traceback
+                print(f"⚠️ torch.compile() failed (non-critical): {type(e).__name__}: {e}")
+                traceback.print_exc()
         
         # Check for Flash Attention presence
         try:
