@@ -45,11 +45,11 @@ RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-ur
 
 # Install build dependencies and Flash Attention first (compiled from source)
 # Force old ABI to match PyTorch wheels using standard pip to ensure flags are respected
-RUN uv pip install packaging ninja setuptools wheel && \
+RUN uv pip install packaging ninja setuptools wheel pip && \
     export MAX_JOBS=4 && \
     export CFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" && \
     export CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" && \
-    /app/.venv/bin/pip install flash-attn --no-build-isolation
+    /app/.venv/bin/python -m pip install flash-attn --no-build-isolation
 
 # Install base dependencies first
 RUN uv pip install setuptools fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
