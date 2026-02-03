@@ -40,12 +40,12 @@ RUN uv venv --python 3.11
 ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+# Install PyTorch with CUDA support using uv
+RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+
 # Install build dependencies and Flash Attention first (compiled from source)
 RUN uv pip install packaging ninja setuptools wheel && \
     uv pip install flash-attn --no-build-isolation
-
-# Install PyTorch with CUDA support using uv
-RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
 
 # Install base dependencies first
 RUN uv pip install setuptools fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
