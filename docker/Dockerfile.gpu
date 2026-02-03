@@ -1,5 +1,5 @@
-# Use NVIDIA CUDA runtime as base for better GPU support
-FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
+# Use NVIDIA CUDA devel image for compilation support (needed for Flash Attention)
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     ffmpeg \
     libsndfile1 \
+    ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3.11 as default
@@ -34,8 +35,11 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
 
+# Install build dependencies and Flash Attention
+RUN pip install packaging ninja && \
+    pip install flash-attn --no-build-isolation
+
 # Copy requirements and install other dependencies
-COPY requirements.txt ./
 RUN pip install --no-cache-dir fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
 
 # Install chatterbox-tts — with the breaking fix (pkuseg package exclusion) 

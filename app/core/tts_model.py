@@ -109,6 +109,14 @@ async def initialize_model():
         _initialization_progress = "Model ready"
         _initialization_error = None
         print(f"✓ Model initialized successfully on {_device}")
+        
+        # Check for Flash Attention presence
+        try:
+            import flash_attn
+            print(f"🚀 FLASH ATTENTION DETECTED: ENABLED (v{flash_attn.__version__})")
+        except ImportError:
+            print(f"⚠️ FLASH ATTENTION NOT FOUND: Using standard attention implementation")
+            
         return _model
         
     except Exception as e:

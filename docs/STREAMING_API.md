@@ -554,7 +554,7 @@ async function streamAndPlayTTS(text: string) {
 {
   "streaming_quality": "fast",
   "streaming_strategy": "word",
-  "streaming_chunk_size": 80,
+  "streaming_chunk_size": 50,
   "streaming_buffer_size": 1
 }
 ```
