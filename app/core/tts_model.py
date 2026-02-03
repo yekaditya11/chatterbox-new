@@ -110,6 +110,19 @@ async def initialize_model():
         _initialization_error = None
         print(f"✓ Model initialized successfully on {_device}")
         
+        # Apply torch.compile() optimization for GPU speedup (PyTorch 2.0+)
+        if _device != 'cpu':
+            try:
+                import torch
+                if hasattr(torch, 'compile') and torch.cuda.is_available():
+                    print(f"🔧 Applying torch.compile() optimization...")
+                    # Use 'reduce-overhead' mode for inference optimization
+                    # This compiles the model's forward pass for faster execution
+                    _model = torch.compile(_model, mode="reduce-overhead")
+                    print(f"✓ TORCH.COMPILE: ENABLED (reduce-overhead mode)")
+            except Exception as e:
+                print(f"⚠️ torch.compile() failed (non-critical): {e}")
+        
         # Check for Flash Attention presence
         try:
             import flash_attn

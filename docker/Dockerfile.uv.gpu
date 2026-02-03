@@ -43,13 +43,8 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 # Install PyTorch with CUDA support using uv
 RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
 
-# Install build dependencies and Flash Attention first (compiled from source)
-# Force old ABI to match PyTorch wheels using standard pip to ensure flags are respected
-RUN uv pip install packaging ninja setuptools wheel pip && \
-    export MAX_JOBS=4 && \
-    export CFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" && \
-    export CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" && \
-    /app/.venv/bin/python -m pip install flash-attn --no-build-isolation
+# Note: Flash Attention is optional. If you need it, install a pre-built wheel matching your PyTorch version.
+# The model will use standard attention automatically if flash-attn is not available.
 
 # Install base dependencies first
 RUN uv pip install setuptools fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
